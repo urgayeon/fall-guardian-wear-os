@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/auth_providers.dart';
 import '../data/auth_service.dart';
+import 'register_screen.dart';
+import 'widgets/auth_error_banner.dart';
 
 /// Email/password sign-in. On success the auth controller flips state and the
 /// app shell routes to the live alert screen.
@@ -39,7 +41,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             email: _email.text.trim(),
             password: _password.text,
           );
-      // Auth state flips → the root gate re-routes to LiveAlertScreen.
+      // Auth state flips → the root gate re-routes to the home shell.
     } on AuthException catch (e) {
       if (mounted) setState(() => _error = e.message);
     } catch (_) {
@@ -47,6 +49,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  void _goToRegister() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+    );
   }
 
   @override
@@ -119,7 +127,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     if (_error != null) ...[
                       const SizedBox(height: 16),
-                      _ErrorBanner(message: _error!),
+                      AuthErrorBanner(message: _error!),
                     ],
                     const SizedBox(height: 24),
                     FilledButton(
@@ -134,40 +142,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             )
                           : const Text('Sign in'),
                     ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: _loading ? null : _goToRegister,
+                      child: const Text("Don't have an account? Sign up"),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _ErrorBanner extends StatelessWidget {
-  const _ErrorBanner({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: scheme.errorContainer,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline, color: scheme.onErrorContainer, size: 20),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(message,
-                style: TextStyle(color: scheme.onErrorContainer)),
-          ),
-        ],
       ),
     );
   }
