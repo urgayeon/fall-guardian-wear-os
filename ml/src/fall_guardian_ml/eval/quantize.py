@@ -118,13 +118,13 @@ def quantize_to_int8_tflite(
 
     # 2. Prepare with a symmetric full-INT8 config, calibrate, convert.
     quantizer = PT2EQuantizer().set_global(
-        get_symmetric_quantization_config(is_per_channel=True)
+        get_symmetric_quantization_config(is_per_channel=False)
     )
     prepared = prepare_pt2e(exported, quantizer)
     with torch.no_grad():
         for i in range(len(calib)):
             prepared(torch.from_numpy(calib[i : i + 1]).float())
-    quantized = convert_pt2e(prepared)
+    quantized = convert_pt2e(prepared, fold_quantize=False)
 
     # 3. Convert to a .tflite flatbuffer with the INT8 quant config.
     edge_model = ai_edge_torch.convert(

@@ -105,7 +105,7 @@ def main(argv: list[str] | None = None) -> None:
     from fall_guardian_ml.models.convlstm_tiny import ConvLSTMTinyConfig, build_model
 
     # The exact windows + standardization the model serves on.
-    bundle = make_synthetic_bundle() if args.synthetic else build_edge_bundle(args.weda_root)
+    bundle = make_synthetic_bundle() if args.synthetic else build_edge_bundle(args.weda_root, include_orientation=False)
     stats_d = json.loads(args.channel_stats.read_text())
     stats = ChannelStats(mean=np.asarray(stats_d["mean"], np.float32),
                          std=np.asarray(stats_d["std"], np.float32))

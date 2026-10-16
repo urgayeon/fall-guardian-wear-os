@@ -67,7 +67,7 @@ def main(argv: list[str] | None = None) -> None:
     from fall_guardian_ml.datasets.edge_dataset import build_edge_bundle, make_synthetic_bundle
     from fall_guardian_ml.eval.quantize import quantize_to_int8_tflite
 
-    bundle = make_synthetic_bundle() if args.synthetic else build_edge_bundle(args.weda_root)
+    bundle = make_synthetic_bundle() if args.synthetic else build_edge_bundle(args.weda_root, include_orientation=False)
     res = quantize_to_int8_tflite(
         ckpt_path=DEFAULT_EDGE_DIR / "convlstm_tiny_fp32.pt",
         channel_stats_path=DEFAULT_EDGE_DIR / "channel_stats.json",
